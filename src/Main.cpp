@@ -83,7 +83,7 @@ static unsigned int CreateShader(const std::string& vertexShader, const std::str
 	glAttachShader(program, Vshader);
 	glAttachShader(program, Fshader);
 	glLinkProgram(program);
-	glValidateProgram(program);
+	GLcall(glValidateProgram(program));
 
 	glDeleteShader(Vshader);
 	glDeleteShader(Fshader);
@@ -137,18 +137,19 @@ int main() {
 	glViewport(0, 0, window_width, window_height);
 
 
-	unsigned int size_x = 10;
-	unsigned int size_y = 10;
+	unsigned int size_x = 100;
+	unsigned int size_y = 100;
 
 	Game game(size_x, size_y);
 	// put the board into vertices.
 
-	float cell_size_x_in_pixels = (float)window_width / size_x;
-	float cell_size_y_in_pixels = (float)window_height / size_y;
-	unsigned int floats_in_pixel = 8; // 4 xy positions
-	size_t size_all = (size_t)game.GetRows() * (size_t)game.GetColumns() * (size_t)floats_in_pixel;
-
-	float* vertices = new float[size_all]{};
+	const float cell_size_x_in_pixels = (float)window_width / size_x;
+	const float cell_size_y_in_pixels = (float)window_height / size_y;
+	const unsigned int floats_in_pixel = 8; // 4 xy positions
+	const size_t maxVertexCount = (size_t)game.GetRows() * (size_t)game.GetColumns() * (size_t)floats_in_pixel/2;
+	const size_t maxQuadCount = (size_t)size_x * (size_t)size_y;
+	const size_t maxIndexCount = maxQuadCount * 6;
+	float* vertices = new float[maxVertexCount*2]{};
 	/*
 		Vertices[] = {
 		x, y, // top left
@@ -168,30 +169,34 @@ int main() {
 			 // bottom left
 			vertices[count] = normalize_pixel_x( x * cell_size_x_in_pixels);
 			vertices[count +1] = normalize_pixel_y( y * cell_size_y_in_pixels);
-			std::cout << vertices[count] << "f, " << vertices[count + 1] <<"f, "<< std::endl;
 			// bottom right
 			vertices[count +2] = normalize_pixel_x( (x + 1) * cell_size_x_in_pixels);
 			vertices[count +3] = normalize_pixel_y( y * cell_size_y_in_pixels);
-			std::cout  << vertices[count +2] << "f, " << vertices[count + 3] << "f, "<< std::endl;
 			// top right
 			vertices[count +4] = normalize_pixel_x( (x + 1) * cell_size_x_in_pixels);
 			vertices[count +5] = normalize_pixel_y( (y - 1) * cell_size_y_in_pixels);
-			std::cout << vertices[count + 4] << "f," << vertices[count + 5] << "f, " <<std::endl;
 			//top left
 			vertices[count + 6] = normalize_pixel_x( (x) * cell_size_x_in_pixels);
 			vertices[count + 7] = normalize_pixel_y( (y -1 ) * cell_size_y_in_pixels);
-			std::cout  << vertices[count + 6] << "f, " << vertices[count + 7] << "f, " << std::endl;
 				//game.board_value(x, y);
 			count += 8;
 		}
 	}
-	std::cout << "\n added " << count << " number of vertices \n" << "wit a size of " << sizeof(vertices);
+	//std::cout << "\n added " << count << " number of vertices \n" << "wit a size of " << sizeof(vertices);
 
-std::cout << sizeof(*vertices);
-	unsigned int indices[] = {
-		0,1,2,
-		2,3,0
-	};
+	std::cout << sizeof(*vertices);
+	unsigned int* indices = new unsigned int[maxIndexCount] {	};
+	unsigned int offset = 0;
+	for (size_t i = 0; i < maxIndexCount; i += 6) {
+		indices[i + 0] = offset + 0;
+		indices[i + 1] = offset + 1;
+		indices[i + 2] = offset + 2;
+
+		indices[i + 3] = offset + 2;
+		indices[i + 4] = offset + 3;
+		indices[i + 5] = offset + 0;
+		offset += 4;
+	}
 
 	// MAKE THE BUFFER and bind
 	{		
@@ -200,12 +205,12 @@ std::cout << sizeof(*vertices);
 		VertexArray VAO;
 		// MAKE VAO BEFORE VB
 		// make buffer
-		GLcall(VertexBuffer VBO(vertices, sizeof(*vertices) * size_all));
+		GLcall(VertexBuffer VBO(vertices, sizeof(float) * maxVertexCount*2));
 		VertexBufferLayout layout;
 		GLcall(layout.Push<float>(2));
 		GLcall(VAO.AddBuffer(VBO, layout));
 		// index buffer for the elements to draw multiple shapes
-		IndexBuffer index_buffer(indices, sizeof(indices));
+		IndexBuffer index_buffer(indices, maxIndexCount);
 
 
 		//parse the shaders
@@ -227,8 +232,8 @@ std::cout << sizeof(*vertices);
 			glClear(GL_COLOR_BUFFER_BIT);
 			GLcall(glUniform4f(location, r, 0.0f, 0.2f, 1.0f));
 			// draw the triangle
-			//GLcall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-			glDrawArrays(GL_TRIANGLES, 0, 3);
+			GLcall(glDrawElements(GL_TRIANGLES, maxVertexCount, GL_UNSIGNED_INT, nullptr));
+			//glDrawArrays(GL_TRIANGLES, 0, 3);
 			if (r > 1.0f) {
 				increment = -0.03f;
 			}

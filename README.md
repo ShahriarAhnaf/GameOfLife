@@ -12,10 +12,8 @@ Cellular Automata visualilzed using the OpenGL library
 
 
 ## Game break down
-- make board
+- make board from drawing quads on the screen.
 - values in board correspond to grafix colour
 - positions of the grid are divided by the size of the screen.
 - pixels are simply two triangles that are pretty small
 - **BE CAREFUL OF DYNAMIC BUFFER ALLOCATIONS!!!!**
-
-to draw all the triangles I need to tell the computer the order of the indices somehow without hardcoding. 

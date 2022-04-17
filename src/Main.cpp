@@ -15,8 +15,8 @@
 
 
 //GLOBALS
-int window_width = 800;
-int window_height = 600;
+int window_width = 1000;
+int window_height = 720;
 
 
 
@@ -115,7 +115,7 @@ int main() {
 
 
 	//pointer to created window in glfw
-	GLFWwindow* window = glfwCreateWindow(window_width,window_height, "Triangle Sim", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(window_width,window_height, "Game of Life", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "we choked at creating window lel" << std::endl;
 		glfwTerminate();
@@ -137,16 +137,15 @@ int main() {
 	glViewport(0, 0, window_width, window_height);
 
 
-	unsigned int size_x = 100;
-	unsigned int size_y = 100;
+	unsigned int size_x = 10;
+	unsigned int size_y = 10;
 
 	Game game(size_x, size_y);
 	// put the board into vertices.
 
 	const float cell_size_x_in_pixels = (float)window_width / size_x;
 	const float cell_size_y_in_pixels = (float)window_height / size_y;
-	const unsigned int floats_in_pixel = 8; // 4 xy positions
-	const size_t maxVertexCount = (size_t)game.GetRows() * (size_t)game.GetColumns() * (size_t)floats_in_pixel/2;
+	const size_t maxVertexCount = (size_t)game.GetRows() * (size_t)game.GetColumns() * 4; // 4 xy positions  times lenght and width
 	const size_t maxQuadCount = (size_t)size_x * (size_t)size_y;
 	const size_t maxIndexCount = maxQuadCount * 6;
 	float* vertices = new float[maxVertexCount*2]{};
@@ -202,7 +201,7 @@ int main() {
 	{		
 		//create a buffer reference so taht you can store more data
 		
-		VertexArray VAO;
+		GLcall(VertexArray VAO);
 		// MAKE VAO BEFORE VB
 		// make buffer
 		GLcall(VertexBuffer VBO(vertices, sizeof(float) * maxVertexCount*2));
@@ -210,13 +209,13 @@ int main() {
 		GLcall(layout.Push<float>(2));
 		GLcall(VAO.AddBuffer(VBO, layout));
 		// index buffer for the elements to draw multiple shapes
-		IndexBuffer index_buffer(indices, maxIndexCount);
+		GLcall(IndexBuffer index_buffer(indices, maxIndexCount));
 
 
 		//parse the shaders
 		ShaderProgramSource source_shader = ParseShader("res/shaders/Basic.shader"); \
 			// SHADER
-			GLcall(GLuint shader = CreateShader(source_shader.VertexSource, source_shader.FragmentSource));
+		GLcall(GLuint shader = CreateShader(source_shader.VertexSource, source_shader.FragmentSource));
 		//bind the shader for program
 		glUseProgram(shader);
 
@@ -232,7 +231,7 @@ int main() {
 			glClear(GL_COLOR_BUFFER_BIT);
 			GLcall(glUniform4f(location, r, 0.0f, 0.2f, 1.0f));
 			// draw the triangle
-			GLcall(glDrawElements(GL_TRIANGLES, maxVertexCount, GL_UNSIGNED_INT, nullptr));
+			GLcall(glDrawElements(GL_TRIANGLES, maxVertexCount*2, GL_UNSIGNED_INT, nullptr));
 			//glDrawArrays(GL_TRIANGLES, 0, 3);
 			if (r > 1.0f) {
 				increment = -0.03f;

@@ -22,4 +22,6 @@ public:
     Game(size_t rows, size_t columns);
     ~Game();
     void run_frame();
+    size_t GetRows() { return rows; }
+    size_t GetColumns() { return columns; }
 };

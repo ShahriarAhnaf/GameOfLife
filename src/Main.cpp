@@ -10,6 +10,20 @@
 #include "IndexBuffer.h"
 #include "VertexBuffer.h"
 #include "VertexArray.h"
+#include "Game.h"
+
+
+
+//GLOBALS
+int window_width = 800;
+int window_height = 600;
+
+
+
+
+
+
+
 
 struct ShaderProgramSource {
 	std::string VertexSource;
@@ -77,7 +91,7 @@ static unsigned int CreateShader(const std::string& vertexShader, const std::str
 }
 
 
-/*
+
 int main() {
 	glfwInit(); // start glffw
 
@@ -89,16 +103,8 @@ int main() {
 
 
 
-	GLfloat vertices[] =
-	{
-		-0.5f, -0.5f , // lower left
-		0.5f, -0.5f,  // lower right 
-		0.5f, 0.5f , // upper right corner
-		-0.5f, 0.5f // lower right 
-	};
-
 	//pointer to created window in glfw
-	GLFWwindow* window = glfwCreateWindow(800, 600, "Triangle Sim", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(window_width,window_height, "Triangle Sim", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "we choked at creating window lel" << std::endl;
 		glfwTerminate();
@@ -117,7 +123,20 @@ int main() {
 	gladLoadGL();
 
 	// where we want open GL to run. 
-	glViewport(0, 0, 800, 600);
+	glViewport(0, 0, window_width, window_height);
+
+
+	size_t size_x = 10;
+	size_t size_y = 10;
+
+	Game game(size_x, size_y);
+	// put the board into vertices.
+
+	float cell_size_x_in_pixels = (float)800 / size_x;
+	float cell_size_x_in_pixels = (float)600 / size_y;
+	unsigned int floats_in_pixel = 4;
+	unsigned int vertices_per_cell = 3; // x, y position, alive or dead
+	float* vertices = new float[game.GetRows() * game.GetColumns() * 4 * 3];
 
 	unsigned int indices[] = {
 		0,1,2,
@@ -153,6 +172,7 @@ int main() {
 		float r = 0.5f;
 		float increment = 0.1f;
 
+
 		while (!glfwWindowShouldClose(window)) {
 			glClear(GL_COLOR_BUFFER_BIT);
 			GLcall(glUniform4f(location, r, 0.0f, 0.2f, 1.0f));
@@ -181,4 +201,3 @@ int main() {
 	glfwTerminate(); // end glfw
 	return 0;
 }
-*/

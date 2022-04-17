@@ -146,6 +146,9 @@ void Game::run_frame()
         std::cout << "-------------------------------" << std::endl;
 }
 
+
+
+/*GAME TEST MAIN
 int main() {
     Game new_game(10,10);
 
@@ -155,3 +158,4 @@ int main() {
     }
     return 0;
 }
+*/

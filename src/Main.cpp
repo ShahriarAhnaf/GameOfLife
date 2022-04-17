@@ -90,6 +90,17 @@ static unsigned int CreateShader(const std::string& vertexShader, const std::str
 	return program;
 }
 
+float normalize_pixel_x(float pixel_pos) {
+	// find the zero pos
+	float zero_pos= (float)window_width / 2;
+	return (pixel_pos - zero_pos) / zero_pos;
+}
+
+float normalize_pixel_y(float pixel_pos) {
+	// find the zero pos
+	float zero_pos = (float)window_height / 2;
+	return -1*(pixel_pos - zero_pos) / zero_pos;
+}
 
 
 int main() {
@@ -126,17 +137,56 @@ int main() {
 	glViewport(0, 0, window_width, window_height);
 
 
-	size_t size_x = 10;
-	size_t size_y = 10;
+	unsigned int size_x = 10;
+	unsigned int size_y = 10;
 
 	Game game(size_x, size_y);
 	// put the board into vertices.
 
-	float cell_size_x_in_pixels = (float)800 / size_x;
-	float cell_size_x_in_pixels = (float)600 / size_y;
-	unsigned int floats_in_pixel = 4;
-	unsigned int vertices_per_cell = 3; // x, y position, alive or dead
-	float* vertices = new float[game.GetRows() * game.GetColumns() * 4 * 3];
+	float cell_size_x_in_pixels = (float)window_width / size_x;
+	float cell_size_y_in_pixels = (float)window_height / size_y;
+	unsigned int floats_in_pixel = 8; // 4 xy positions
+	size_t size_all = (size_t)game.GetRows() * (size_t)game.GetColumns() * (size_t)floats_in_pixel;
+
+	float* vertices = new float[size_all]{};
+	/*
+		Vertices[] = {
+		x, y, // top left
+		x, y, 
+		x, y, 
+		x, y,
+		alive/dead,
+		....
+		}
+		
+	
+	*/
+	unsigned int count=0;
+	for (unsigned int x = 0; x < size_x; x ++) {
+		for (unsigned int y = size_y; y > 0; y--) { // flip Y because bottom left is now 0,0
+
+			// find four pixels
+			 // bottom left
+			vertices[count] = normalize_pixel_x( x * cell_size_x_in_pixels);
+			vertices[count +1] = normalize_pixel_y( y * cell_size_y_in_pixels);
+			std::cout << "x : " << vertices[count] << " y :  " << vertices[count + 1] << std::endl;
+			// bottom right
+			vertices[count +2] = normalize_pixel_x( (x + 1) * cell_size_x_in_pixels);
+			vertices[count +3] = normalize_pixel_y( y * cell_size_y_in_pixels);
+			std::cout << "x : " << vertices[count +2] << " y :  " << vertices[count + 3] << std::endl;
+			// top right
+			vertices[count +4] = normalize_pixel_x( (x + 1) * cell_size_x_in_pixels);
+			vertices[count +5] = normalize_pixel_y( (y - 1) * cell_size_y_in_pixels);
+			std::cout << "x : " << vertices[count + 4] << " y :  " << vertices[count + 5] << std::endl;
+			//top left
+			vertices[count + 6] = normalize_pixel_x( (x) * cell_size_x_in_pixels);
+			vertices[count + 7] = normalize_pixel_y( (y -1 ) * cell_size_y_in_pixels);
+			std::cout << "x : " << vertices[count + 6] << " y :  " << vertices[count + 7] << std::endl;
+				//game.board_value(x, y);
+			count += 8;
+		}
+	}
+	std::cout << "\n added " << count << " number of vertices \n" << "wit a size of " << sizeof(vertices);
 
 	unsigned int indices[] = {
 		0,1,2,
@@ -150,10 +200,10 @@ int main() {
 		VertexArray VAO;
 		// MAKE VAO BEFORE VB
 		// make buffer
-		VertexBuffer VBO(vertices, sizeof(vertices));
+		GLcall(VertexBuffer VBO(vertices, sizeof(vertices)));
 		VertexBufferLayout layout;
-		layout.Push<float>(2);
-		VAO.AddBuffer(VBO, layout);
+		GLcall(layout.Push<float>(2));
+		GLcall(VAO.AddBuffer(VBO, layout));
 		// index buffer for the elements to draw multiple shapes
 		IndexBuffer index_buffer(indices, sizeof(indices));
 

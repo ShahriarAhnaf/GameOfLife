@@ -1,6 +1,6 @@
 #include "Game.h"
 
-int Game::count_neigbours(unsigned int* board, size_t x,size_t y, int boundary_x_left, int boundary_y_top, int boundary_x_right, int boundary_y_bottom)
+int Game::count_neigbours(unsigned int* board, unsigned int x,unsigned int y, int boundary_x_left, int boundary_y_top, int boundary_x_right, int boundary_y_bottom)
 {
     unsigned int sum = 0;
     for (int n = boundary_y_top; n < boundary_y_bottom; n++) {
@@ -15,8 +15,8 @@ int Game::count_neigbours(unsigned int* board, size_t x,size_t y, int boundary_x
 
 void Game::update_cells(unsigned int* board)
 {
-    for (int y = 0; y < rows; y++) {
-        for (int x = 0; x < columns; x++) {
+    for (unsigned int y = 0; y < rows; y++) {
+        for (unsigned int x = 0; x < columns; x++) {
             unsigned int state = board[index(x,y)];
             int neighbours = determine_state(board, x, y);
             // three rules of life
@@ -26,14 +26,14 @@ void Game::update_cells(unsigned int* board)
             }
         }
     }
-    for (int y = 0; y < rows; y++) {
-        for (int x = 0; x < columns; x++) {
+    for (unsigned int y = 0; y < rows; y++) {
+        for (unsigned int x = 0; x < columns; x++) {
             board[index(x,y)] = new_board[index(x,y)];
         }
     }
 }
 
-Game::Game(size_t rows, size_t columns)
+Game::Game(unsigned int rows, unsigned int columns)
     :rows{ rows },
     columns{columns}
 {
@@ -53,11 +53,11 @@ Game::Game(size_t rows, size_t columns)
         std::uniform_int_distribution<unsigned> distrib(0, 1);
 
         // array of pointers to array
-        board = new unsigned int[rows * columns]{};
-        new_board = new unsigned int[rows * columns]{};
+        board = new unsigned int[(size_t)rows * columns]{};
+        new_board = new unsigned int[(size_t)rows * columns]{};
         // populate board randomly!
-        for (int y = 0; y < rows; y++) {
-            for (int x = 0; x < columns; x++) {
+        for (unsigned int y = 0; y < rows; y++) {
+            for (unsigned int x = 0; x < columns; x++) {
                 board[index(x,y)] = distrib(gen);
             }
         }
@@ -72,7 +72,7 @@ Game::~Game()
     new_board = nullptr;
 }
 
-int Game::determine_state(unsigned int *board, size_t x, size_t y)
+int Game::determine_state(unsigned int *board, unsigned int x, unsigned int y)
 {
     unsigned int sum = 0;
     // top left 
@@ -128,8 +128,8 @@ int Game::determine_state(unsigned int *board, size_t x, size_t y)
 
 void Game::run_frame()
 {
-        for (int y = 0; y < rows; y++) {
-            for (int x = 0; x < columns; x++) {
+        for (unsigned int y = 0; y < rows; y++) {
+            for (unsigned int x = 0; x < columns; x++) {
 
                 if (board[index(x,y)] == 1) {
                     // "\033[{FORMAT_ATTRIBUTE};{FORGROUND_COLOR};{BACKGROUND_COLOR}m{TEXT}\033[{RESET_FORMATE_ATTRIBUTE}m"

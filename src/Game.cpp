@@ -1,17 +1,43 @@
 #include "Game.h"
 
-int Game::count_neigbours(unsigned int** board, int x, int y, int boundary_x_left, int boundary_y_top, int boundary_x_right, int boundary_y_bottom)
+int Game::count_neigbours(unsigned int* board, size_t x,size_t y, int boundary_x_left, int boundary_y_top, int boundary_x_right, int boundary_y_bottom)
 {
-	return 0;
+    unsigned int sum = 0;
+    for (int n = boundary_y_top; n < boundary_y_bottom; n++) {
+        for (int m = boundary_x_left; m < boundary_x_right; m++) {
+            // std::cout << board[x+m][y+n] << " " << m << n << " "; 
+            sum += board[index(x+m, y+n)];
+        }
+    }
+    //std::cout << "--" << sum <<" -- " << x << y << std::endl;
+    return sum;
 }
 
-void Game::update_cells(unsigned int** board)
+void Game::update_cells(unsigned int* board)
 {
+    for (int y = 0; y < rows; y++) {
+        for (int x = 0; x < columns; x++) {
+            unsigned int state = board[index(x,y)];
+            int neighbours = determine_state(board, x, y);
+            // three rules of life
+            if (neighbours == 3 || neighbours == 2) { new_board[index(x, y)] = 1; }
+            else {
+                new_board[index(x,y)] = 0;
+            }
+        }
+    }
+    for (int y = 0; y < rows; y++) {
+        for (int x = 0; x < columns; x++) {
+            board[index(x,y)] = new_board[index(x,y)];
+        }
+    }
 }
 
-Game::Game(int rows, int columns)
+Game::Game(size_t rows, size_t columns)
+    :rows{ rows },
+    columns{columns}
 {
-    
+        // random engine code from stack overflow as always
         std::random_device rd;
         std::mt19937::result_type seed = rd() ^ (
             (std::mt19937::result_type)
@@ -27,21 +53,105 @@ Game::Game(int rows, int columns)
         std::uniform_int_distribution<unsigned> distrib(0, 1);
 
         // array of pointers to array
-        board = new unsigned int* [columns];
+        board = new unsigned int[rows * columns]{};
+        new_board = new unsigned int[rows * columns]{};
         // populate board randomly!
-        for(int i = 0)
-        for (int x = 0; x < size; x++) {
-            for (int y = 0; y < size; y++) {
-                board[x][y] = distrib(gen);
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < columns; x++) {
+                board[index(x,y)] = distrib(gen);
             }
         }
 }
 
 Game::~Game()
 {
+    // gaarbage clean up 
+    delete[] board;
+    board = nullptr;
+    delete[] new_board;
+    new_board = nullptr;
 }
 
-int Game::determine_state(unsigned int(*board)[size], int x, int y)
+int Game::determine_state(unsigned int *board, size_t x, size_t y)
 {
-	return 0;
+    unsigned int sum = 0;
+    // top left 
+    if (x == 0 && y == 0) {
+        sum += count_neigbours(board, x, y, 0, 0, 2, 2);
+    }
+    //bottom left 
+    else if (x == 0 && y == rows - 1) {
+        sum += count_neigbours(board, x, y, 0, -1, 2, 1);
+    }
+    // top right 
+    else if (x == columns - 1 && y == 0) {
+        sum += count_neigbours(board, x, y, -1, 0, 1, 2);
+    }
+    // bottom right
+    else if (x == columns - 1 && y == rows - 1) {
+        sum += count_neigbours(board, x, y, -1, -1, 1, 1);
+    }
+    else if (x == 0) { // left column
+        sum += count_neigbours(board, x, y, 0, 1, 2, 2);
+        for (int n = -1; n < 2; n++) {
+            // right most column values
+            sum += board[index(columns - 1,y + n)];
+        }
+    }
+    else if (x == columns - 1) {// right column
+        sum += count_neigbours(board, x, y, -1, 1, 1, 2);
+        for (int n = -1; n < 2; n++) {
+            // left most column
+            sum += board[index(0,y + n)];
+        }
+    }
+    else if (y == 0) { // top
+        sum += count_neigbours(board, x, y, -1, 0, 2, 2);
+        for (int n = -1; n < 2; n++) {
+            // right most column values
+            sum += board[index(x + n, rows - 1)];
+        }
+    }
+    else if (y == rows - 1) {// bottom 
+        sum += count_neigbours(board, x, y, -1, -1, 2, 1);
+        for (int n = -1; n < 2; n++) {
+            // right most column values
+            sum += board[index(x + n, 0)];
+        }
+    }
+    else {
+        sum += count_neigbours(board, x, y, -1, -1, 2, 2);
+    }
+    //std::cout << "--" << sum <<" -- " << x << y << std::endl;
+    return sum;
+}
+
+void Game::run_frame()
+{
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < columns; x++) {
+
+                if (board[index(x,y)] == 1) {
+                    // "\033[{FORMAT_ATTRIBUTE};{FORGROUND_COLOR};{BACKGROUND_COLOR}m{TEXT}\033[{RESET_FORMATE_ATTRIBUTE}m"
+                    std::cout <<  board[index(x,y)] << " ";
+                }
+                else {
+                    std::cout <<  board[index(x,y)] << " ";
+                }
+            }
+            std::cout << std::endl;
+        }// one second delay
+        update_cells(board);
+
+        std::cout << "-------------------------------" << std::endl;
+}
+
+int main() {
+    Game new_game(10,10);
+
+    while (true) {
+        new_game.run_frame();
+        std::this_thread::sleep_for(std::chrono::milliseconds(400));
+    }
+    return 0;
 }

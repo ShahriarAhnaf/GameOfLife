@@ -17,3 +17,5 @@ Cellular Automata visualilzed using the OpenGL library
 - positions of the grid are divided by the size of the screen.
 - pixels are simply two triangles that are pretty small
 - **BE CAREFUL OF DYNAMIC BUFFER ALLOCATIONS!!!!**
+
+to draw all the triangles I need to tell the computer the order of the indices somehow without hardcoding. 

@@ -16,3 +16,4 @@ Cellular Automata visualilzed using the OpenGL library
 - values in board correspond to grafix colour
 - positions of the grid are divided by the size of the screen.
 - pixels are simply two triangles that are pretty small
+- **BE CAREFUL OF DYNAMIC BUFFER ALLOCATIONS!!!!**

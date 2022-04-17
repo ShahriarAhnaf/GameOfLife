@@ -137,57 +137,194 @@ int main() {
 	glViewport(0, 0, window_width, window_height);
 
 
-	unsigned int size_x = 10;
-	unsigned int size_y = 10;
+	// unsigned int size_x = 10;
+	// unsigned int size_y = 10;
 
-	Game game(size_x, size_y);
-	// put the board into vertices.
+	// Game game(size_x, size_y);
+	// // put the board into vertices.
 
-	float cell_size_x_in_pixels = (float)window_width / size_x;
-	float cell_size_y_in_pixels = (float)window_height / size_y;
-	unsigned int floats_in_pixel = 8; // 4 xy positions
-	size_t size_all = (size_t)game.GetRows() * (size_t)game.GetColumns() * (size_t)floats_in_pixel;
+	// float cell_size_x_in_pixels = (float)window_width / size_x;
+	// float cell_size_y_in_pixels = (float)window_height / size_y;
+	// unsigned int floats_in_pixel = 8; // 4 xy positions
+	// size_t size_all = (size_t)game.GetRows() * (size_t)game.GetColumns() * (size_t)floats_in_pixel;
 
-	float* vertices = new float[size_all]{};
-	/*
-		Vertices[] = {
-		x, y, // top left
-		x, y, 
-		x, y, 
-		x, y,
-		alive/dead,
-		....
-		}
+	// float* vertices = new float[size_all]{};
+	// /*
+	// 	Vertices[] = {
+	// 	x, y, // top left
+	// 	x, y, 
+	// 	x, y, 
+	// 	x, y,
+	// 	alive/dead,
+	// 	....
+	// 	}
 		
 	
-	*/
-	unsigned int count=0;
-	for (unsigned int x = 0; x < size_x; x ++) {
-		for (unsigned int y = size_y; y > 0; y--) { // flip Y because bottom left is now 0,0
+	// */
+	// unsigned int count=0;
+	// for (unsigned int x = 0; x < size_x; x ++) {
+	// 	for (unsigned int y = size_y; y > 0; y--) { // flip Y because bottom left is now 0,0
 
-			// find four pixels
-			 // bottom left
-			vertices[count] = normalize_pixel_x( x * cell_size_x_in_pixels);
-			vertices[count +1] = normalize_pixel_y( y * cell_size_y_in_pixels);
-			std::cout << "x : " << vertices[count] << " y :  " << vertices[count + 1] << std::endl;
-			// bottom right
-			vertices[count +2] = normalize_pixel_x( (x + 1) * cell_size_x_in_pixels);
-			vertices[count +3] = normalize_pixel_y( y * cell_size_y_in_pixels);
-			std::cout << "x : " << vertices[count +2] << " y :  " << vertices[count + 3] << std::endl;
-			// top right
-			vertices[count +4] = normalize_pixel_x( (x + 1) * cell_size_x_in_pixels);
-			vertices[count +5] = normalize_pixel_y( (y - 1) * cell_size_y_in_pixels);
-			std::cout << "x : " << vertices[count + 4] << " y :  " << vertices[count + 5] << std::endl;
-			//top left
-			vertices[count + 6] = normalize_pixel_x( (x) * cell_size_x_in_pixels);
-			vertices[count + 7] = normalize_pixel_y( (y -1 ) * cell_size_y_in_pixels);
-			std::cout << "x : " << vertices[count + 6] << " y :  " << vertices[count + 7] << std::endl;
-				//game.board_value(x, y);
-			count += 8;
-		}
-	}
-	std::cout << "\n added " << count << " number of vertices \n" << "wit a size of " << sizeof(vertices);
+	// 		// find four pixels
+	// 		 // bottom left
+	// 		vertices[count] = normalize_pixel_x( x * cell_size_x_in_pixels);
+	// 		vertices[count +1] = normalize_pixel_y( y * cell_size_y_in_pixels);
+	// 		std::cout << vertices[count] << "f, " << vertices[count + 1] <<"f, "<< std::endl;
+	// 		// bottom right
+	// 		vertices[count +2] = normalize_pixel_x( (x + 1) * cell_size_x_in_pixels);
+	// 		vertices[count +3] = normalize_pixel_y( y * cell_size_y_in_pixels);
+	// 		std::cout  << vertices[count +2] << "f, " << vertices[count + 3] << "f, "<< std::endl;
+	// 		// top right
+	// 		vertices[count +4] = normalize_pixel_x( (x + 1) * cell_size_x_in_pixels);
+	// 		vertices[count +5] = normalize_pixel_y( (y - 1) * cell_size_y_in_pixels);
+	// 		std::cout << vertices[count + 4] << "f," << vertices[count + 5] << "f, " <<std::endl;
+	// 		//top left
+	// 		vertices[count + 6] = normalize_pixel_x( (x) * cell_size_x_in_pixels);
+	// 		vertices[count + 7] = normalize_pixel_y( (y -1 ) * cell_size_y_in_pixels);
+	// 		std::cout  << vertices[count + 6] << "f, " << vertices[count + 7] << "f, " << std::endl;
+	// 			//game.board_value(x, y);
+	// 		count += 8;
+	// 	}
+	// }
+	// std::cout << "\n added " << count << " number of vertices \n" << "wit a size of " << sizeof(vertices);
 
+float* vertices = new float[]{
+-1.0f, -1.0f,
+-0.8f, -1.0f,
+-0.8f,-0.8f,
+-1.0f, -0.8f,
+-1.0f, -0.8f,
+-0.8f, -0.8f,
+-0.8f,-0.6f,
+-1.0f, -0.6f,
+-1.0f, -0.6f,
+-0.8f, -0.6f,
+-0.8f,-0.4f,
+-1.0f, -0.4f,
+-1.0f, -0.4f,
+-0.8f, -0.4f,
+-0.8f,-0.2f,
+-1.0f, -0.2f,
+-1.0f, -0.2f,
+-0.8f, -0.2f,
+-0.8f,0.0f,
+-1.0f, 0.0f,
+-1.0f, 0.0f,
+-0.8f, 0.0f,
+-0.8f,0.2f,
+-1.0f, 0.2f,
+-1.0f, 0.2f,
+-0.8f, 0.2f,
+-0.8f,0.4f,
+-1.0f, 0.4f,
+-1.0f, 0.4f,
+-0.8f, 0.4f,
+-0.8f,0.6f,
+-1.0f, 0.6f,
+-1.0f, 0.6f,
+-0.8f, 0.6f,
+-0.8f,0.8f,
+-1.0f, 0.8f,
+-1.0f, 0.8f,
+-0.8f, 0.8f,
+-0.8f,1.0f,
+-1.0f, 1.0f,
+-0.8f, -1.0f,
+-0.6f, -1.0f,
+-0.6f,-0.8f,
+-0.8f, -0.8f,
+-0.8f, -0.8f,
+-0.6f, -0.8f,
+-0.6f,-0.6f,
+-0.8f, -0.6f,
+-0.8f, -0.6f,
+-0.6f, -0.6f,
+-0.6f,-0.4f,
+-0.8f, -0.4f,
+-0.8f, -0.4f,
+-0.6f, -0.4f,
+-0.6f,-0.2f,
+-0.8f, -0.2f,
+-0.8f, -0.2f,
+-0.6f, -0.2f,
+-0.6f,0.0f,
+-0.8f, 0.0f,
+-0.8f, 0.0f,
+-0.6f, 0.0f,
+-0.6f,0.2f,
+-0.8f, 0.2f,
+-0.8f, 0.2f,
+-0.6f, 0.2f,
+-0.6f,0.4f,
+-0.8f, 0.4f,
+-0.8f, 0.4f,
+-0.6f, 0.4f,
+-0.6f,0.6f,
+-0.8f, 0.6f,
+-0.8f, 0.6f,
+-0.6f, 0.6f,
+-0.6f,0.8f,
+-0.8f, 0.8f,
+-0.8f, 0.8f,
+-0.6f, 0.8f,
+-0.6f,1.0f,
+-0.8f, 1.0f,
+-0.6f, -1.0f,
+-0.4f, -1.0f,
+-0.4f,-0.8f,
+-0.6f, -0.8f,
+-0.6f, -0.8f,
+-0.4f, -0.8f,
+-0.4f,-0.6f,
+-0.6f, -0.6f,
+-0.6f, -0.6f,
+-0.4f, -0.6f,
+-0.4f,-0.4f,
+-0.6f, -0.4f,
+-0.6f, -0.4f,
+-0.4f, -0.4f,
+-0.4f,-0.2f,
+-0.6f, -0.2f,
+-0.6f, -0.2f,
+-0.4f, -0.2f,
+-0.4f,0.0f,
+-0.6f, 0.0f,
+-0.6f, 0.0f,
+-0.4f, 0.0f,
+-0.4f,0.2f,
+-0.6f, 0.2f,
+-0.6f, 0.2f,
+-0.4f, 0.2f,
+-0.4f,0.4f,
+-0.6f, 0.4f,
+-0.6f, 0.4f,
+-0.4f, 0.4f,
+-0.4f,0.6f,
+-0.6f, 0.6f,
+-0.6f, 0.6f,
+-0.4f, 0.6f,
+-0.4f,0.8f,
+-0.6f, 0.8f,
+-0.6f, 0.8f,
+-0.4f, 0.8f,
+-0.4f,1.0f,
+-0.6f, 1.0f,
+-0.4f, -1.0f,
+-0.2f, -1.0f,
+-0.2f,-0.8f,
+-0.4f, -0.8f,
+-0.4f, -0.8f,
+-0.2f, -0.8f,
+-0.2f,-0.6f,
+-0.4f, -0.6f,
+-0.4f, -0.6f,
+-0.2f, -0.6f,
+-0.2f,-0.4f,
+-0.4f, -0.4f,
+-0.4f, -0.4f,
+-0.2f, -0.4f
+};
+std::cout << sizeof(*vertices);
 	unsigned int indices[] = {
 		0,1,2,
 		2,3,0
@@ -200,7 +337,7 @@ int main() {
 		VertexArray VAO;
 		// MAKE VAO BEFORE VB
 		// make buffer
-		GLcall(VertexBuffer VBO(vertices, sizeof(vertices)));
+		GLcall(VertexBuffer VBO(vertices, sizeof(*vertices) * 268));
 		VertexBufferLayout layout;
 		GLcall(layout.Push<float>(2));
 		GLcall(VAO.AddBuffer(VBO, layout));

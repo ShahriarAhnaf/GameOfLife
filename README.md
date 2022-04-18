@@ -1,11 +1,8 @@
 # GameOfLife
 Cellular Automata visualilzed using the OpenGL library
 
-## ISSUES
-FIX THE FREAKING BUG FOR INDEX BUFFERING
 ## 2d Dynamic arrays in thihs game
 - using a block of allocated 1d array and indexing using the index function which takes in (x,y) value
-
 
 ## OPENGL GAME ENGINE
 - vertex shaders and buffers to store vertices to draw
@@ -14,11 +11,18 @@ FIX THE FREAKING BUG FOR INDEX BUFFERING
 
 
 ## understanding the drawings
-- ELEMENTS? -> 
-- VERTICES?
-- layouts?
-- buffers?
-- array buffers?
+- ELEMENTS? -> a collection of vertices to make a quad represented by 4 vertices
+- VERTICES? - > a collection of xy coordinate represented by 2 floats
+- layouts? -> how to read elements in specific order using the buffer. made up of type, count and a normalization bool.
+- buffers? -> an array of data to store to call for drawing later
+- array buffers? -> an array of buffers to choose which one to draw later. 
+**THE TWO METHODS OF ARRAY BUFFERS**
+
+USING ONE VERTEX ARRAY BUFFER WITH MULTIPLE LAYOUTS TO BIND 
+
+OR 
+
+USING MULTIPLE VERTEX ARRAY BUFFERS FOR EACH OBJECT. 
 
 
 ## Game break down

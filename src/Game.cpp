@@ -142,9 +142,15 @@ void Game::run_frame()
             std::cout << std::endl;
         }// one second delay
         */
+        auto start = std::chrono::steady_clock::now();
         update_cells(board);
-        std::this_thread::sleep_for(std::chrono::milliseconds(400));
-        //std::cout << "-------------------------------" << std::endl;
+
+        auto end = std::chrono::steady_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+        if (elapsed < 400)
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(400 - elapsed));
+        }//std::cout << "-------------------------------" << std::endl;
 }
 
 

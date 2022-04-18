@@ -80,9 +80,9 @@ static unsigned int CreateShader(const std::string& vertexShader, const std::str
 	GLcall(unsigned int program = glCreateProgram());
 	unsigned int Vshader = CompileShader(GL_VERTEX_SHADER, vertexShader);
 	unsigned int Fshader = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
-	glAttachShader(program, Vshader);
-	glAttachShader(program, Fshader);
-	glLinkProgram(program);
+	GLcall(glAttachShader(program, Vshader));
+	GLcall(glAttachShader(program, Fshader));
+	GLcall(glLinkProgram(program));
 	GLcall(glValidateProgram(program));
 
 	glDeleteShader(Vshader);
@@ -115,9 +115,6 @@ int main() {
 
 	std::cout << "how big do you want your game to be in height?" << std::endl;
 	std::cin >> size_y;
-
-	std::cout << "how long do you want your game to be in turns?" << std::endl;
-	std::cin >> letime;
 
 	glfwInit(); // start glffw
 
@@ -231,18 +228,18 @@ int main() {
 
 
 		//parse the shaders
-		ShaderProgramSource source_shader = ParseShader("res/shaders/Basic.shader"); \
+		ShaderProgramSource source_shader = ParseShader("res/shaders/Basic.shader");
 			// SHADER
 		GLcall(GLuint shader = CreateShader(source_shader.VertexSource, source_shader.FragmentSource));
 		//bind the shader for program
-		glUseProgram(shader);
+		GLcall(glUseProgram(shader));
 
 		// colouring dis hoe
 
 		GLcall(int location = glGetUniformLocation(shader, "uColor"));
 		ASSERT(location != -1);
 		count = 0;
-		while ( (count > letime) || !glfwWindowShouldClose(window)) {
+		while (!glfwWindowShouldClose(window)) {
 			game.run_frame(); //update the simulation
 			glClear(GL_COLOR_BUFFER_BIT);
 			//GLcall(glUniform4f(location, 1.0f, 0.0f, 0.2f, 1.0f));
@@ -269,7 +266,7 @@ int main() {
 			}
 			//GLcall(glDrawElementsBaseVertex(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (nullptr), 4));
 			//GLcall(glDrawArrays(GL_TRIANGLES, 0, 3));
-			count++;
+			//count++;
 			glfwSwapBuffers(window);
 
 

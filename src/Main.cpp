@@ -104,6 +104,21 @@ float normalize_pixel_y(float pixel_pos) {
 
 
 int main() {
+
+
+	unsigned int size_x, size_y, letime = 0;
+
+	std::cout << "WELCOME TO THE SIMULATION OF LIFE!!" << std::endl;
+
+	std::cout << "how big do you want your game to be in width?" << std::endl;
+	std::cin >> size_x;
+
+	std::cout << "how big do you want your game to be in height?" << std::endl;
+	std::cin >> size_y;
+
+	std::cout << "how long do you want your game to be in turns?" << std::endl;
+	std::cin >> letime;
+
 	glfwInit(); // start glffw
 
 	//setting version 3.3 MAJOR.MINOR
@@ -137,8 +152,6 @@ int main() {
 	glViewport(0, 0, window_width, window_height);
 
 
-	unsigned int size_x = 5;
-	unsigned int size_y = 5;
 
 	Game game(size_x, size_y);
 	// put the board into vertices.
@@ -196,9 +209,11 @@ int main() {
 		indices[i + 5] = offset + 0;
 		offset += 4;
 	}
-	for (size_t i = 0; i < maxIndexCount; i ++) {
+	/*
+	FOR TESTING INDEX
+	for (size_t i = 0; i < maxIndexCount; i++) {
 		std::cout << " indices " << indices[i] << " i : " << i << std::endl;
-	}
+	}*/
 
 	// MAKE THE BUFFER and bind
 	{		
@@ -226,38 +241,44 @@ int main() {
 
 		GLcall(int location = glGetUniformLocation(shader, "uColor"));
 		ASSERT(location != -1);
-		while (!glfwWindowShouldClose(window)) {
+		count = 0;
+		while ( (count > letime) || !glfwWindowShouldClose(window)) {
 			game.run_frame(); //update the simulation
 			glClear(GL_COLOR_BUFFER_BIT);
-
+			//GLcall(glUniform4f(location, 1.0f, 0.0f, 0.2f, 1.0f));
+			
 			for (unsigned int y = 0; y < game.GetRows(); y++) {
 				for (unsigned int x = 0; x < game.GetColumns(); x++) {
 					if (game.board_value(x, y)) {
-						GLcall(glUniform4f(location, 1.0f, 0.0f, 0.2f, 1.0f));
+						GLcall(glUniform4f(location, 1.0f, 0.0f, 0.0f, 1.0f));
 					}
 					else {
-						GLcall(glUniform4f(location, 0.0f, 0.0f, 0.2f, 1.0f));
+						GLcall(glUniform4f(location, 0.0f, 0.0f, 0.0f, 1.0f));
 					}
 					// draw the board cell square, equivalenet to 
 					// two triangles or 4 elements or 8 float points.
 					// offset using the pointer in the indices
 					// address of indices * size of the indice * offset of each round(4 ) * current index of board
 					unsigned long long index = (unsigned long long)y * (unsigned long long)game.GetRows() + (unsigned long long)x;
-					unsigned long long offset =sizeof(*indices) * index * 6; 
-					std::cout << indices + offset << " value : " << *(indices + offset) << " should be " << indices[index*4]<< std::endl;
-					GLcall(glDrawElements(GL_TRIANGLES, 8, GL_UNSIGNED_INT, (const void*)(indices + offset)));
-					//glDrawArrays(GL_TRIANGLES, 0, 3)
+					unsigned long long offset = 4 * index; // 6 is the offset of each indice to the next quad
+					//std::cout << (const void*)(indices + offset) << " value : " << *(indices + offset)<< std::endl;
+					GLcall(glDrawElementsBaseVertex(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr, offset));
+					
+					//glfwSwapBuffers(window);
 				}
 			}
+			//GLcall(glDrawElementsBaseVertex(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (nullptr), 4));
+			//GLcall(glDrawArrays(GL_TRIANGLES, 0, 3));
+			count++;
 			glfwSwapBuffers(window);
 
 
 			glfwPollEvents(); // queue all the thinngs.
 	}
 
-
+	
 	// delete the uffers and objects that are still left over. 
-}
+	}
 	glfwDestroyWindow(window);
 
 

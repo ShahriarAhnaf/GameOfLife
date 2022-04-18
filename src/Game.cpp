@@ -143,8 +143,8 @@ void Game::run_frame()
         }// one second delay
         */
         update_cells(board);
-
-        std::cout << "-------------------------------" << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(400));
+        //std::cout << "-------------------------------" << std::endl;
 }
 
 

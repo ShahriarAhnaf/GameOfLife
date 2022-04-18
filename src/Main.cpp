@@ -137,8 +137,8 @@ int main() {
 	glViewport(0, 0, window_width, window_height);
 
 
-	unsigned int size_x = 10;
-	unsigned int size_y = 10;
+	unsigned int size_x = 5;
+	unsigned int size_y = 5;
 
 	Game game(size_x, size_y);
 	// put the board into vertices.
@@ -183,7 +183,7 @@ int main() {
 	}
 	//std::cout << "\n added " << count << " number of vertices \n" << "wit a size of " << sizeof(vertices);
 
-	std::cout << sizeof(*vertices);
+	//std::cout << sizeof(*vertices);
 	unsigned int* indices = new unsigned int[maxIndexCount] {	};
 	unsigned int offset = 0;
 	for (size_t i = 0; i < maxIndexCount; i += 6) {
@@ -195,6 +195,9 @@ int main() {
 		indices[i + 4] = offset + 3;
 		indices[i + 5] = offset + 0;
 		offset += 4;
+	}
+	for (size_t i = 0; i < maxIndexCount; i ++) {
+		std::cout << " indices " << indices[i] << " i : " << i << std::endl;
 	}
 
 	// MAKE THE BUFFER and bind
@@ -239,8 +242,10 @@ int main() {
 					// two triangles or 4 elements or 8 float points.
 					// offset using the pointer in the indices
 					// address of indices * size of the indice * offset of each round(4 ) * current index of board
-					unsigned int offset =4* sizeof(*indices) * (y * game.GetRows() + x);
-					GLcall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (const void*)(indices + offset)));
+					unsigned long long index = (unsigned long long)y * (unsigned long long)game.GetRows() + (unsigned long long)x;
+					unsigned long long offset =sizeof(*indices) * index * 6; 
+					std::cout << indices + offset << " value : " << *(indices + offset) << " should be " << indices[index*4]<< std::endl;
+					GLcall(glDrawElements(GL_TRIANGLES, 8, GL_UNSIGNED_INT, (const void*)(indices + offset)));
 					//glDrawArrays(GL_TRIANGLES, 0, 3)
 				}
 			}

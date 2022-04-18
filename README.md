@@ -11,6 +11,14 @@ Cellular Automata visualilzed using the OpenGL library
 - ability to easily draw triangles and squares to the window.
 
 
+## understanding the drawings
+- ELEMENTS? -> 
+- VERTICES?
+- layouts?
+- buffers?
+- array buffers?
+
+
 ## Game break down
 - make board from drawing quads on the screen.
 - values in board correspond to grafix colour

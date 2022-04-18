@@ -24,5 +24,5 @@ public:
     void run_frame();
     unsigned int GetRows() { return rows; }
     unsigned int GetColumns() { return columns; }
-    int board_value(unsigned int x, unsigned int y) { return board[index(x, y)]; }
+    unsigned int board_value(unsigned int x, unsigned int y) { return board[index(x, y)]; }
 };

@@ -223,23 +223,27 @@ int main() {
 
 		GLcall(int location = glGetUniformLocation(shader, "uColor"));
 		ASSERT(location != -1);
-		float r = 0.5f;
-		float increment = 0.1f;
-
-
 		while (!glfwWindowShouldClose(window)) {
+			game.run_frame(); //update the simulation
 			glClear(GL_COLOR_BUFFER_BIT);
-			GLcall(glUniform4f(location, r, 0.0f, 0.2f, 1.0f));
-			// draw the triangle
-			GLcall(glDrawElements(GL_TRIANGLES, maxVertexCount*2, GL_UNSIGNED_INT, nullptr));
-			//glDrawArrays(GL_TRIANGLES, 0, 3);
-			if (r > 1.0f) {
-				increment = -0.03f;
+
+			for (unsigned int y = 0; y < game.GetRows(); y++) {
+				for (unsigned int x = 0; x < game.GetColumns(); x++) {
+					if (game.board_value(x, y)) {
+						GLcall(glUniform4f(location, 1.0f, 0.0f, 0.2f, 1.0f));
+					}
+					else {
+						GLcall(glUniform4f(location, 0.0f, 0.0f, 0.2f, 1.0f));
+					}
+					// draw the board cell square, equivalenet to 
+					// two triangles or 4 elements or 8 float points.
+					// offset using the pointer in the indices
+					// address of indices * size of the indice * offset of each round(4 ) * current index of board
+					unsigned int offset =4* sizeof(*indices) * (y * game.GetRows() + x);
+					GLcall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (const void*)(indices + offset)));
+					//glDrawArrays(GL_TRIANGLES, 0, 3)
+				}
 			}
-			else if (r < 0.1f) {
-				increment = 0.2f;
-			}
-			r = r * (1 + increment);
 			glfwSwapBuffers(window);
 
 

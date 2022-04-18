@@ -128,7 +128,7 @@ int Game::determine_state(unsigned int *board, unsigned int x, unsigned int y)
 
 void Game::run_frame()
 {
-        for (unsigned int y = 0; y < rows; y++) {
+       /* for (unsigned int y = 0; y < rows; y++) {
             for (unsigned int x = 0; x < columns; x++) {
 
                 if (board[index(x,y)] == 1) {
@@ -141,6 +141,7 @@ void Game::run_frame()
             }
             std::cout << std::endl;
         }// one second delay
+        */
         update_cells(board);
 
         std::cout << "-------------------------------" << std::endl;

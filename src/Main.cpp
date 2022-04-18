@@ -240,7 +240,7 @@ int main() {
 		ASSERT(location != -1);
 		count = 0;
 		while (!glfwWindowShouldClose(window)) {
-			game.run_frame(); //update the simulation
+			//update the simulation
 			glClear(GL_COLOR_BUFFER_BIT);
 			//GLcall(glUniform4f(location, 1.0f, 0.0f, 0.2f, 1.0f));
 			
@@ -259,7 +259,7 @@ int main() {
 					unsigned long long index = (unsigned long long)y * (unsigned long long)game.GetRows() + (unsigned long long)x;
 					unsigned long long offset = 4 * index; // 6 is the offset of each indice to the next quad
 					//std::cout << (const void*)(indices + offset) << " value : " << *(indices + offset)<< std::endl;
-					GLcall(glDrawElementsBaseVertex(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr, offset));
+					GLcall(glDrawElementsBaseVertex(GL_TRIANGLES, 12, GL_UNSIGNED_INT, nullptr, offset));
 					
 					//glfwSwapBuffers(window);
 				}
@@ -267,6 +267,7 @@ int main() {
 			//GLcall(glDrawElementsBaseVertex(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (nullptr), 4));
 			//GLcall(glDrawArrays(GL_TRIANGLES, 0, 3));
 			//count++;
+			game.run_frame();
 			glfwSwapBuffers(window);
 
 

@@ -1,6 +1,11 @@
 # GameOfLife
 Cellular Automata visualilzed using the OpenGL library
 
+## NEXT STEPS
+- add mouse addition of cells
+- add 3D rendering
+- add multithreading
+
 ## 2d Dynamic arrays in thihs game
 - using a block of allocated 1d array and indexing using the index function which takes in (x,y) value
 

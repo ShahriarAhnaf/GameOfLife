@@ -11,84 +11,13 @@
 #include "VertexBuffer.h"
 #include "VertexArray.h"
 #include "Game.h"
-
+#include "Shader.h"
 
 
 //GLOBALS
 int window_width = 1000;
 int window_height = 720;
 
-
-
-
-
-
-
-
-struct ShaderProgramSource {
-	std::string VertexSource;
-	std::string FragmentSource;
-};
-
-
-static ShaderProgramSource ParseShader(const std::string& filePath){
-	std::ifstream stream(filePath);
-	std::stringstream ss[2];
-	enum class ShaderType {
-			NONE = -1, VERTEX = 0, FRAGMENT = 1
-	};
-	ShaderType type = ShaderType::NONE;
-	std::string line;
-	// parse through the lines
-	while(getline(stream, line)){
-		// chekc the shader
-		if (line.find("#shader") != std::string::npos) {
-			if (line.find("vertex") != std::string::npos)
-				type = ShaderType::VERTEX;
-			else if (line.find("fragment") != std::string::npos)
-				type = ShaderType::FRAGMENT;
-		}
-		else {
-			ss[(int)type] << line << '\n';
-		}
-	}
-
-	return { ss[0].str(), ss[1].str() };
-}
-
-static unsigned int CompileShader( unsigned int type, const std::string& source)
-{
-	unsigned int id = glCreateShader(type);
-	const char* raw_src = source.c_str();
-	glShaderSource(id, 1, &raw_src, nullptr); 
-	glCompileShader(id);
-	
-	int result;
-	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
-	if (result == GL_FALSE) {
-		int length;
-		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-		char* message = (char*)alloca(length * sizeof(char));
-		glGetShaderInfoLog(id, length, &length, message);
-		std::cout << "failed to compile" << (type == GL_VERTEX_SHADER ? "vertex" : "fragment" ) << "shader" << std::endl;
-		std::cout << message << std::endl;
-	}
-
-	return id;
-}
-static unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader) {
-	GLcall(unsigned int program = glCreateProgram());
-	unsigned int Vshader = CompileShader(GL_VERTEX_SHADER, vertexShader);
-	unsigned int Fshader = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
-	GLcall(glAttachShader(program, Vshader));
-	GLcall(glAttachShader(program, Fshader));
-	GLcall(glLinkProgram(program));
-	GLcall(glValidateProgram(program));
-
-	glDeleteShader(Vshader);
-	glDeleteShader(Fshader);
-	return program;
-}
 
 float normalize_pixel_x(float pixel_pos) {
 	// find the zero pos
@@ -228,16 +157,10 @@ int main() {
 
 
 		//parse the shaders
-		ShaderProgramSource source_shader = ParseShader("res/shaders/Basic.shader");
-			// SHADER
-		GLcall(GLuint shader = CreateShader(source_shader.VertexSource, source_shader.FragmentSource));
-		//bind the shader for program
-		GLcall(glUseProgram(shader));
+		Shaders shade("res/shaders/Basic.shader");
+		shade.Bind();
 
 		// colouring dis hoe
-
-		GLcall(int location = glGetUniformLocation(shader, "uColor"));
-		ASSERT(location != -1);
 		count = 0;
 		while (!glfwWindowShouldClose(window)) {
 			//update the simulation
@@ -247,10 +170,10 @@ int main() {
 			for (unsigned int y = 0; y < game.GetRows(); y++) {
 				for (unsigned int x = 0; x < game.GetColumns(); x++) {
 					if (game.board_value(x, y)) {
-						GLcall(glUniform4f(location, 1.0f, 0.0f, 0.0f, 1.0f));
+						shade.SetUniform4f("uColor", 1.0f, 0.0f, 0.0f, 1.0f);
 					}
 					else {
-						GLcall(glUniform4f(location, 0.0f, 0.0f, 0.0f, 1.0f));
+						shade.SetUniform4f("uColor", 0.0f, 0.5f, 0.0f, 1.0f);
 					}
 					// draw the board cell square, equivalenet to 
 					// two triangles or 4 elements or 8 float points.
